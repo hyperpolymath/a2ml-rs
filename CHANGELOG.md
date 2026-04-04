@@ -9,3 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Run: just changelog -->
 
 ## [Unreleased]
+
+### Added (2026-04-04)
+- Enhanced A2ML validation tests from session 9 dogfooding integration
