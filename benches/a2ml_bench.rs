@@ -10,6 +10,7 @@ use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criteri
 
 use a2ml::parser::parse;
 use a2ml::renderer::render;
+use a2ml::types::TrustLevel;
 
 // ---------------------------------------------------------------------------
 // Document fixtures
@@ -203,6 +204,116 @@ fn bench_roundtrip_large(c: &mut Criterion) {
 }
 
 // ---------------------------------------------------------------------------
+// Attestation-heavy document benchmarks
+//
+// Attestation blocks (`!attest`) are parsed separately from the main document
+// tree.  These benchmarks measure the cost of parsing documents that contain
+// many attestation records — the typical pattern in multi-reviewer workflows.
+// ---------------------------------------------------------------------------
+
+/// A document containing 20 attestation records.
+fn attestation_heavy_document() -> String {
+    let mut doc = String::with_capacity(4_096);
+    doc.push_str("# Attested Document\n\n@version 1.0\n\n");
+    doc.push_str("This document has been reviewed by many parties.\n\n");
+
+    let roles = ["author", "reviewer", "auditor", "approver", "witness"];
+    let trusts = ["reviewed", "verified", "automated", "manual", "attested"];
+    for i in 0..20 {
+        doc.push_str(&format!(
+            "!attest identity=Agent{} role={} trust={} ts=2026-01-{:02}\n",
+            i,
+            roles[i % roles.len()],
+            trusts[i % trusts.len()],
+            (i % 28) + 1,
+        ));
+    }
+    doc
+}
+
+/// A document containing 30 directives (`@`-prefixed metadata lines).
+fn directive_heavy_document() -> String {
+    let mut doc = String::with_capacity(4_096);
+    doc.push_str("# Directive Document\n\n");
+
+    let keys = [
+        "version",
+        "require",
+        "schema",
+        "lang",
+        "encoding",
+        "created",
+        "modified",
+        "author",
+        "project",
+        "stability",
+    ];
+    for i in 0..30 {
+        doc.push_str(&format!(
+            "@{} value-{}\n",
+            keys[i % keys.len()],
+            i
+        ));
+    }
+    doc.push_str("\nBody paragraph after directives.\n");
+    doc
+}
+
+/// Benchmark parsing a document with many attestation records.
+fn bench_parse_attestation_heavy(c: &mut Criterion) {
+    let input = attestation_heavy_document();
+    c.bench_function("parse/attestation_heavy_20", |b| {
+        b.iter(|| {
+            let doc = parse(black_box(&input)).expect("attestation document must parse");
+            black_box(doc);
+        });
+    });
+}
+
+/// Benchmark parsing a document with many directives.
+fn bench_parse_directive_heavy(c: &mut Criterion) {
+    let input = directive_heavy_document();
+    c.bench_function("parse/directive_heavy_30", |b| {
+        b.iter(|| {
+            let doc = parse(black_box(&input)).expect("directive document must parse");
+            black_box(doc);
+        });
+    });
+}
+
+/// Benchmark extracting attestation records from a parsed document.
+///
+/// Isolates the attestation-access pattern used when verifying provenance
+/// chains — separate from the overall parse cost.
+fn bench_attestation_access(c: &mut Criterion) {
+    let input = attestation_heavy_document();
+    let doc = parse(&input).expect("parse attestation document");
+
+    c.bench_function("attestation/access_20_records", |b| {
+        b.iter(|| {
+            // Simulate a verifier walking the full attestation chain.
+            let count = black_box(&doc)
+                .attestations
+                .iter()
+                .filter(|a| a.trust_level == TrustLevel::Verified)
+                .count();
+            black_box(count);
+        });
+    });
+}
+
+/// Benchmark render of an attestation-heavy document (provenance serialisation).
+fn bench_render_attestation_heavy(c: &mut Criterion) {
+    let doc = parse(&attestation_heavy_document()).expect("parse");
+    c.bench_function("render/attestation_heavy_20", |b| {
+        b.iter(|| {
+            let output = render(black_box(&doc)).expect("render must succeed");
+            black_box(output);
+        });
+    });
+}
+
+// ---------------------------------------------------------------------------
 // Criterion registration
 // ---------------------------------------------------------------------------
 
@@ -227,4 +338,12 @@ criterion_group!(
     bench_roundtrip_large
 );
 
-criterion_main!(parse_benches, render_benches, roundtrip_benches);
+criterion_group!(
+    attestation_benches,
+    bench_parse_attestation_heavy,
+    bench_parse_directive_heavy,
+    bench_attestation_access,
+    bench_render_attestation_heavy,
+);
+
+criterion_main!(parse_benches, render_benches, roundtrip_benches, attestation_benches);
