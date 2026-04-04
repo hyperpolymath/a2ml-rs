@@ -47,3 +47,17 @@
 
 ## Priority
 - **MEDIUM** — 5 source files with 14 tests is decent ratio but renderer and types likely lack coverage. Fuzz directory is empty. No benchmarks despite benchmark dir existing. As the Rust reference implementation, this should have the most comprehensive tests of all A2ML libraries.
+
+## Session 9 additions (2026-04-04)
+
+### What Was Added
+
+| Area | Tests Added | Location |
+|------|-------------|----------|
+| Benchmarks | Extended `benches/a2ml_bench.rs` with `attestation_benches` group: 4 functions: `bench_parse_attestation_heavy`, `bench_parse_directive_heavy`, `bench_attestation_access`, `bench_render_attestation_heavy` | `benches/a2ml_bench.rs` |
+
+### Updated Test Counts
+
+| Suite | Count | Status |
+|-------|-------|--------|
+| Benchmarks (attestation) | 4 new | Added to attestation_benches group |
