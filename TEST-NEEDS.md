@@ -1,5 +1,7 @@
 # Test & Benchmark Requirements
 
+## CRG Grade: C — ACHIEVED 2026-04-04
+
 ## Current State
 - Unit tests: 14 pass / 0 fail (11 unit + 3 doc-tests)
 - Integration tests: NONE
