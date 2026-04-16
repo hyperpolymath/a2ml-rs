@@ -450,7 +450,7 @@ fn is_thematic_break(line: &str) -> bool {
     if trimmed.len() < 3 {
         return false;
     }
-    let first = trimmed.chars().next().unwrap();
+    let first = trimmed.chars().next().expect("TODO: handle error");
     (first == '-' || first == '*' || first == '_') && trimmed.chars().all(|c| c == first)
 }
 
@@ -496,21 +496,21 @@ mod tests {
 
     #[test]
     fn parse_empty_document() {
-        let doc = parse("").unwrap();
+        let doc = parse("").expect("TODO: handle error");
         assert!(doc.title.is_none());
         assert!(doc.blocks.is_empty());
     }
 
     #[test]
     fn parse_heading_and_paragraph() {
-        let doc = parse("# Title\n\nSome text here.").unwrap();
+        let doc = parse("# Title\n\nSome text here.").expect("TODO: handle error");
         assert_eq!(doc.title.as_deref(), Some("Title"));
         assert_eq!(doc.blocks.len(), 2);
     }
 
     #[test]
     fn parse_directive() {
-        let doc = parse("@version 1.0").unwrap();
+        let doc = parse("@version 1.0").expect("TODO: handle error");
         assert_eq!(doc.directives.len(), 1);
         assert_eq!(doc.directives[0].name, "version");
         assert_eq!(doc.directives[0].value, "1.0");
@@ -519,7 +519,7 @@ mod tests {
     #[test]
     fn parse_attestation_block() {
         let input = "!attest identity=Alice role=author trust=reviewed";
-        let doc = parse(input).unwrap();
+        let doc = parse(input).expect("TODO: handle error");
         assert_eq!(doc.attestations.len(), 1);
         assert_eq!(doc.attestations[0].identity, "Alice");
         assert_eq!(doc.attestations[0].trust_level, TrustLevel::Reviewed);
@@ -528,7 +528,7 @@ mod tests {
     #[test]
     fn parse_code_block() {
         let input = "```rust\nfn main() {}\n```";
-        let doc = parse(input).unwrap();
+        let doc = parse(input).expect("TODO: handle error");
         assert_eq!(doc.blocks.len(), 1);
         if let Block::CodeBlock { language, content } = &doc.blocks[0] {
             assert_eq!(language.as_deref(), Some("rust"));
@@ -546,7 +546,7 @@ mod tests {
 
     #[test]
     fn parse_thematic_break() {
-        let doc = parse("---").unwrap();
+        let doc = parse("---").expect("TODO: handle error");
         assert_eq!(doc.blocks.len(), 1);
         assert_eq!(doc.blocks[0], Block::ThematicBreak);
     }

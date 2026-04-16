@@ -241,7 +241,7 @@ mod tests {
             level: 2,
             content: vec![Inline::Text("Test".into())],
         });
-        let rendered = render(&doc).unwrap();
+        let rendered = render(&doc).expect("TODO: handle error");
         assert!(rendered.contains("## Test"));
     }
 
@@ -251,7 +251,7 @@ mod tests {
         doc.directives.push(Directive::new("version", "1.0"));
         doc.blocks
             .push(Block::Directive(Directive::new("version", "1.0")));
-        let rendered = render(&doc).unwrap();
+        let rendered = render(&doc).expect("TODO: handle error");
         assert!(rendered.contains("@version 1.0"));
     }
 
@@ -262,7 +262,7 @@ mod tests {
             language: Some("rust".into()),
             content: "fn main() {}".into(),
         });
-        let rendered = render(&doc).unwrap();
+        let rendered = render(&doc).expect("TODO: handle error");
         assert!(rendered.contains("```rust"));
         assert!(rendered.contains("fn main() {}"));
     }
