@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-License-Identifier: MPL-2.0
 = a2ml-rs — Show Me The Receipts
 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 :toc:
@@ -92,19 +92,19 @@ full dependency tree if deploying in a security-sensitive context.
 [quote, Cargo.toml]
 ____
 license = "MPL-2.0"
-# (PMPL-1.0-or-later preferred; MPL-2.0 required for crates.io)
+# (MPL-2.0 preferred; MPL-2.0 required for crates.io)
 ____
 
-crates.io requires an OSI-approved SPDX identifier; PMPL-1.0-or-later is not
+crates.io requires an OSI-approved SPDX identifier; MPL-2.0 is not
 yet recognised by OSI. Every source file carries the dual comment:
-`// SPDX-License-Identifier: MPL-2.0 // (PMPL-1.0-or-later preferred; ...)`.
+`// SPDX-License-Identifier: MPL-2.0 // (MPL-2.0 preferred; ...)`.
 This follows the project-wide fallback policy documented in CLAUDE.md.
 
 **Caveat:** The published crate on crates.io is effectively MPL-2.0. Any
 fork or redistribution outside the crates.io ecosystem should honour
-PMPL-1.0-or-later where the platform permits it.
+MPL-2.0 where the platform permits it.
 
-- License file: `LICENSE` (PMPL-1.0-or-later text), `LICENSE-MPL-2.0`
+- License file: `LICENSE` (MPL-2.0 text), `LICENSE-MPL-2.0`
 - Learn more: https://github.com/hyperpolymath/palimpsest-license
 
 == Dogfooded Across The Account

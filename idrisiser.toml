@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 # idrisiser manifest for a2ml-rs
 #
 # Generates Idris2 dependent-type wrappers for the A2ML parser and renderer.
