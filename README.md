@@ -1,68 +1,73 @@
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-pink?logo=github)](https://github.com/sponsors/hyperpolymath)
-
-// SPDX-License-Identifier: CC-BY-SA-4.0
-= a2ml-rs
-Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-:toc:
-:toc-placement: preamble
+<!--
+SPDX-License-Identifier: CC-BY-SA-4.0
+SPDX-FileCopyrightText: 2025-2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+-->
 
 Rust parser and renderer for A2ML (Attested Markup Language) — the
-structured markup format used across the hyperpolymath estate for AI-agent
-communication, machine state files, and provenance-tracked documentation.
+structured markup format used across the hyperpolymath estate for
+AI-agent communication, machine state files, and provenance-tracked
+documentation.
 
-== Overview
+# Overview
 
-A2ML extends a Markdown-like surface syntax with two first-class constructs:
+A2ML extends a Markdown-like surface syntax with two first-class
+constructs:
 
-* `@directives` — single-line machine-readable metadata prefixed with `@`
-* `!attest` blocks — record identity, role, and trust-level on any piece
-  of content, enabling provenance tracking across AI-agent and human review chains
+- `@directives` — single-line machine-readable metadata prefixed with
+  `@`
+
+- `!attest` blocks — record identity, role, and trust-level on any piece
+  of content, enabling provenance tracking across AI-agent and human
+  review chains
 
 `a2ml-rs` implements:
 
-* `src/parser.rs` — line-oriented state machine: headings, directives,
-  attestation blocks, fenced code, block quotes, ordered/unordered lists.
-  Entry points: `parse()` and `parse_file()`.
-* `src/renderer.rs` — serialises a `Document` AST back to canonical A2ML,
-  making round-trips deterministic.
-* `src/types.rs` — core types: `Document`, `Block`, `Inline`, `Directive`,
-  `Attestation`, `TrustLevel` (Unverified → Automated → Reviewed → Verified),
-  `Manifest`.
-* `src/error.rs` — `A2mlError`: `ParseError`, `Io`, `RenderError`.
+- `src/parser.rs` — line-oriented state machine: headings, directives,
+  attestation blocks, fenced code, block quotes, ordered/unordered
+  lists. Entry points: `parse()` and `parse_file()`.
 
-The crate root is `#![forbid(unsafe_code)]`. Dependencies: `serde`/`serde_derive`
-for serialisation, `thiserror` for error types, `criterion` for benchmarks only.
+- `src/renderer.rs` — serialises a `Document` AST back to canonical
+  A2ML, making round-trips deterministic.
 
-== Usage
+- `src/types.rs` — core types: `Document`, `Block`, `Inline`,
+  `Directive`, `Attestation`, `TrustLevel` (Unverified → Automated →
+  Reviewed → Verified), `Manifest`.
 
-[source,rust]
-----
+- `src/error.rs` — `A2mlError`: `ParseError`, `Io`, `RenderError`.
+
+The crate root is `#![forbid(unsafe_code)]`. Dependencies:
+`serde`/`serde_derive` for serialisation, `thiserror` for error types,
+`criterion` for benchmarks only.
+
+# Usage
+
+```rust
 use a2ml::{parse, render};
 
 let doc = parse(input_str)?;
 let output = render(&doc)?;
-----
+```
 
-== Attestation Trust Levels
+# Attestation Trust Levels
 
-[cols="1,3"]
-|===
-| Level | Meaning
-
-| `Unverified` | No review — raw agent or tool output
-| `Automated`  | Processed by a pipeline without human review
-| `Reviewed`   | Human-reviewed (claimed, not cryptographically proved)
-| `Verified`   | Formally verified or cryptographically attested
-|===
+| Level        | Meaning                                                |
+|--------------|--------------------------------------------------------|
+| `Unverified` | No review — raw agent or tool output                   |
+| `Automated`  | Processed by a pipeline without human review           |
+| `Reviewed`   | Human-reviewed (claimed, not cryptographically proved) |
+| `Verified`   | Formally verified or cryptographically attested        |
 
 Attestations are syntactic declarations, not cryptographic signatures.
 Signature verification belongs in the Groove protocol stack.
 
-== Related
+# Related
 
-* link:https://github.com/hyperpolymath/pandoc-a2ml[pandoc-a2ml] — Pandoc reader/writer for A2ML
-* link:https://github.com/hyperpolymath/a2ml-haskell[a2ml-haskell] — Haskell implementation
+- [pandoc-a2ml](https://github.com/hyperpolymath/pandoc-a2ml) — Pandoc
+  reader/writer for A2ML
 
-== License
+- [a2ml-haskell](https://github.com/hyperpolymath/a2ml-haskell) —
+  Haskell implementation
 
-MPL-2.0. See link:LICENSE[LICENSE].
+# License
+
+MPL-2.0. See [LICENSE](LICENSE).
